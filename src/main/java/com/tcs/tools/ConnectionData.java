@@ -7,138 +7,122 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConnectionData {
-    private String hostname, subsystem, username, password;
-    private int port;
-    private Map<String, String> attributes = new HashMap<String, String>();
+	private String hostname, subsystem, username, password;
+	private int port;
+	private Map<String, String> attributes = new HashMap<String, String>();
 
-    /**
-     * Adds new attribute.
-     * 
-     * @param name
-     *            attribute name
-     * @param value
-     *            attribute value
-     * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate
-     *         that the map previously associated null with key, if the implementation supports null values.)
-     */
-    public String addAttribute(String name, String value) {
-        return attributes.put(name, value);
-    }
+	/**
+	 * Adds new attribute.
+	 * 
+	 * @param name
+	 *            attribute name
+	 * @param value
+	 *            attribute value
+	 * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate
+	 *         that the map previously associated null with key, if the implementation supports null values.)
+	 */
+	public String addAttribute(String name, String value) {
+		return attributes.put(name, value);
+	}
 
-    /**
-     * 
-     * @param key
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     */
-    public String removeAttribute(String key) {
-        return attributes.remove(key);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		ConnectionData other = (ConnectionData) obj;
+		if (attributes == null) {
+			if (other.attributes != null) return false;
+		} else if (!attributes.equals(other.attributes)) return false;
+		if (hostname == null) {
+			if (other.hostname != null) return false;
+		} else if (!hostname.equals(other.hostname)) return false;
+		if (password == null) {
+			if (other.password != null) return false;
+		} else if (!password.equals(other.password)) return false;
+		if (port != other.port) return false;
+		if (subsystem == null) {
+			if (other.subsystem != null) return false;
+		} else if (!subsystem.equals(other.subsystem)) return false;
+		if (username == null) {
+			if (other.username != null) return false;
+		} else if (!username.equals(other.username)) return false;
+		return true;
+	}
 
-    public String getHostname() {
-        return hostname;
-    }
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
+	public String getHostname() {
+		return hostname;
+	}
 
-    public String getSubsystem() {
-        return subsystem;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setSubsystem(String subsystem) {
-        this.subsystem = subsystem;
-    }
+	public int getPort() {
+		return port;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getSubsystem() {
+		return subsystem;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+		result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + port;
+		result = prime * result + ((subsystem == null) ? 0 : subsystem.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	/**
+	 * 
+	 * @param key
+	 * @return the previous value associated with key, or null if there was no mapping for key.
+	 */
+	public String removeAttribute(String key) {
+		return attributes.remove(key);
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
 
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
+	public void setPort(int port) {
+		this.port = port;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
-        result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-        result = prime * result + ((password == null) ? 0 : password.hashCode());
-        result = prime * result + port;
-        result = prime * result + ((subsystem == null) ? 0 : subsystem.hashCode());
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
-        return result;
-    }
+	public void setSubsystem(String subsystem) {
+		this.subsystem = subsystem;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ConnectionData other = (ConnectionData) obj;
-        if (attributes == null) {
-            if (other.attributes != null)
-                return false;
-        } else if (!attributes.equals(other.attributes))
-            return false;
-        if (hostname == null) {
-            if (other.hostname != null)
-                return false;
-        } else if (!hostname.equals(other.hostname))
-            return false;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
-            return false;
-        if (port != other.port)
-            return false;
-        if (subsystem == null) {
-            if (other.subsystem != null)
-                return false;
-        } else if (!subsystem.equals(other.subsystem))
-            return false;
-        if (username == null) {
-            if (other.username != null)
-                return false;
-        } else if (!username.equals(other.username))
-            return false;
-        return true;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public boolean validate() {
-        if (hostname == null || hostname.length() == 0 || port < 1 || port > 64000 || username == null || username.length() < 1)
-            return false;
-        else
-            return true;
-    }
+	public boolean validate() {
+		if (hostname == null || hostname.length() == 0 || port < 1 || port > 64000 || username == null || username.length() < 1) return false;
+		else return true;
+	}
 
 }
