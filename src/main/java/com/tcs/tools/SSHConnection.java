@@ -11,12 +11,14 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSubsystem;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import com.tcs.application.BlockingQueue;
+import com.tcs.tools.ConnectionData.ConnectionType;
 
 public class SSHConnection {
 	class ConnectionWatcher extends Thread {
@@ -65,6 +67,7 @@ public class SSHConnection {
 			}
 		}
 	}
+
 	public static final String subsystem = "subsystem";
 	public static final int SUBSYSTEM = 1;
 	/**
@@ -76,6 +79,7 @@ public class SSHConnection {
 	private String username;
 	private String password;
 	private String subsystemName;
+	private final ConnectionType channelType = ConnectionType.subsystem;
 	private String endOfSatement = "";
 	private Channel channel;
 	private boolean initalized = false;
@@ -210,16 +214,11 @@ public class SSHConnection {
 					}
 				}
 			}
-			final ChannelSubsystem channel = (ChannelSubsystem) session.openChannel("subsystem");
-			channel.setSubsystem(getSubsystemName());
-			// channel.setPty(true);
-			this.channel = channel;
-			// channel.setErrStream(System.err);
-			// channel.setInputStream(System.in);
-			// channel.setOutputStream(System.out);
-			// channel.setInputStream(new PipedInputStream(inputPipe));
-			// channel.setOutputStream(new PipedOutputStream(outputPipe));
-			// channel.setInputStream(null);
+
+			this.channel = prepareChannel();
+			if (channel == null) {
+				return;
+			}
 			responseHandler = new ResponseHandler(this, responseMessageQueue);
 			requestHandler = new RequestHandler(this, requestMessageQueue);
 			initalized = true;
@@ -229,26 +228,36 @@ public class SSHConnection {
 		}
 	}
 
+	private Channel prepareChannel() throws JSchException {
+		switch (channelType) {
+		case subsystem:
+			return prepareSubsystemChannel();
+		case shell:
+			return prepareShellChannel();
+		default:
+			break;
+		}
+		return null;
+	}
+
+	private Channel prepareShellChannel() throws JSchException {
+		final ChannelExec channel = (ChannelExec) session.openChannel("exec");
+		return channel;
+	}
+
+	private ChannelSubsystem prepareSubsystemChannel() throws JSchException {
+		final ChannelSubsystem channel = (ChannelSubsystem) session.openChannel(channelType.toString());
+		channel.setSubsystem(getSubsystemName());
+		return channel;
+	}
+
 	public void initialize(final ConnectionData data) throws Exception {
 		this.hostname = data.getHostname();
 		this.port = data.getPort();
-		this.subsystemName = data.getSubsystem();
+		this.subsystemName = data.getSubsystemName();
 		this.username = data.getUsername();
 		this.password = data.getPassword();
 		initialize();
-	}
-
-	public void initialize(final String hostname, final int port, final String username) throws Exception {
-		this.username = username;
-		this.hostname = hostname;
-		this.port = port;
-		initialize();
-	}
-
-	public void initialize(final String hostname, final int port, final String username, final String password) throws Exception {
-		this.password = password;
-		initialize(hostname, port, username);
-
 	}
 
 	public boolean isConnected() {
@@ -304,7 +313,7 @@ public class SSHConnection {
 		this.retryCount = retryCount;
 	}
 
-	public void setSubsystemName(final String subsystemName) {
+	private void setSubsystemName(final String subsystemName) {
 		this.subsystemName = subsystemName;
 	}
 

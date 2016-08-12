@@ -7,36 +7,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SesssionManager {
-	private Map<String, Object> sessionMap = new HashMap<String, Object>();
+	private final Map<String, Object> sessionMap = new HashMap<String, Object>();
 
-	public void destroy(SSHConnection connection) {
+	public void destroy(final SSHConnection connection) {
 
 	}
 
 	/**
-	 * @param host
-	 * @param port
-	 * @param username
 	 * @param password
 	 * @return
 	 */
-	private String generateSessionKey(String host, int port, String username, Object password) {
-		return username + ":" + password + '@' + host + ":" + port;
+	private String generateSessionKey(final ConnectionData connectionData) {
+		return connectionData.getUsername() + ":" + connectionData.getPassword() + '@' + connectionData.getHostname() + ":"
+				+ connectionData.getPort();
 	}
 
 	public int getSessionCount() {
 		return sessionMap.size();
 	}
 
-	public SSHConnection newSession(String host, int port, String username, String password) {
-		String key = generateSessionKey(host, port, username, password);
+	public SSHConnection newSession(final ConnectionData connectionData) {
+		final String key = generateSessionKey(connectionData);
 		if (sessionMap.containsKey(key)) {
 			// ??
 		}
-		SSHConnection connection = new SSHConnection();
+		final SSHConnection connection = new SSHConnection();
 		try {
-			connection.initialize(host, port, username, password);
-		} catch (Exception e) {
+			connection.initialize(connectionData);
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		connection.connect();
