@@ -56,6 +56,7 @@ public class ResponseHandler implements Runnable {
 				while (inputStream.available() > 0 && (read = inputStream.read(bytes)) != -1) {
 					charBuffer = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(bytes, 0, read));
 					buffer.append(charBuffer.array());
+					System.out.println(buffer.toString());
 
 				}
 				if (buffer.length() > 0) {

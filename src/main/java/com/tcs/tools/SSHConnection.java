@@ -79,7 +79,7 @@ public class SSHConnection {
 	private String username;
 	private String password;
 	private String subsystemName;
-	private final ConnectionType channelType = ConnectionType.subsystem;
+	private ConnectionType channelType = ConnectionType.subsystem;
 	private String endOfSatement = "";
 	private Channel channel;
 	private boolean initalized = false;
@@ -234,10 +234,23 @@ public class SSHConnection {
 			return prepareSubsystemChannel();
 		case shell:
 			return prepareShellChannel();
+		case session:
+			return prepareSessionChannel();
+		case exec:
+			return prepareExecChannel();
 		default:
+			
 			break;
 		}
 		return null;
+	}
+
+	private Channel prepareExecChannel() throws JSchException {
+		return session.openChannel("exec");
+	}
+
+	private Channel prepareSessionChannel() throws JSchException {
+		return session.openChannel("session");
 	}
 
 	private Channel prepareShellChannel() throws JSchException {
@@ -255,6 +268,9 @@ public class SSHConnection {
 		this.hostname = data.getHostname();
 		this.port = data.getPort();
 		this.subsystemName = data.getSubsystemName();
+		if(this.subsystemName.trim()==null || this.subsystemName.trim().length()==0){
+			this.channelType=ConnectionType.session;
+		}
 		this.username = data.getUsername();
 		this.password = data.getPassword();
 		initialize();

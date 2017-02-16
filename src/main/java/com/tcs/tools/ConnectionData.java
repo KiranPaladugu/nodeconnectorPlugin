@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ConnectionData {
 	public static enum ConnectionType {
-		subsystem, shell
+		subsystem, shell, session, exec
 	}
 
 	private String hostname, subsystemName, username, password;
